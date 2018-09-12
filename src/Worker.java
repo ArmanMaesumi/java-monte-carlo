@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Worker extends Thread{
+public class Worker extends Thread {
 
     private boolean working;
 
@@ -9,7 +9,7 @@ public class Worker extends Thread{
 
     private Simulation sim;
 
-    public Worker(int id, Simulation sim){
+    public Worker(int id, Simulation sim) {
         this.threadId = id;
         this.sim = sim;
 
@@ -17,24 +17,18 @@ public class Worker extends Thread{
         this.completedIterations = new AtomicLong(0);
     }
 
-    public void run(){
-        while(sim.getIterations() > sim.getIteration())
-            job();
+    public void run() {
+        working = true;
+        while (sim.getIterations() > sim.getIteration()) {
+            sim.getRun().run();
+            sim.incrementIteration();
+            incrementCompletedIterations();
+        }
+        working = false;
         System.out.println("Thread: " + threadId + ", " + completedIterations.get());
     }
 
-    public void job(){
-        if (sim.getIterations() > sim.getIteration()){
-            working = true;
-            sim.incrementIteration();
-            incrementCompletedIterations();
-            sim.getRun().run();
-        }else{
-            working = false;
-        }
-    }
-
-    public void incrementCompletedIterations(){
+    private void incrementCompletedIterations() {
         this.completedIterations.incrementAndGet();
     }
 

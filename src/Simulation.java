@@ -31,7 +31,7 @@ public class Simulation {
         workers = new Worker[threads];
     }
 
-    public void iterate(){
+    private void iterate(){
         isRunning = true;
         workers = new Worker[threads];
         initializeWorkers();
