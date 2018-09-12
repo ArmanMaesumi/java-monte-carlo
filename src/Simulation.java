@@ -4,34 +4,64 @@ public class Simulation {
     
     private int id;
     private int threads;
-    private int iterations;
+    private AtomicLong iterations;
 
     private AtomicLong currentIteration;
 
     private boolean isRunning;
 
     private Worker[] workers;
+
+    public Runnable getRun() {
+        return run;
+    }
+
+    public void setRun(Runnable run) {
+        this.run = run;
+    }
+
+    private Runnable run;
     
     public Simulation(int id, int threads, int iterations){
         this.id = id;
         this.threads = threads;
-        this.iterations = iterations;
+        this.iterations = new AtomicLong(iterations);
         this.currentIteration = new AtomicLong(0);
-
+        this.run = null;
         workers = new Worker[threads];
     }
 
-    public void iterate(Runnable run){
-        if (iterations > currentIteration.get()){
-            incrementIteration();
-            run.run();
-        }else{
-            isRunning = false;
+    public void iterate(){
+        isRunning = true;
+        workers = new Worker[threads];
+        initializeWorkers();
+        startWorkers();
+        isRunning = false;
+    }
+
+    public void start(Runnable run){
+        this.run = run;
+        iterate();
+    }
+
+    private void startWorkers(){
+        for (int i = 0; i < workers.length; i++) {
+            workers[i].start();
+        }
+
+        for (int i = 0; i < workers.length; i++) {
+            try {
+                workers[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void start(){
-        isRunning = true;
+    private void initializeWorkers(){
+        for (int i = 0; i < workers.length; i++) {
+            workers[i] = new Worker(i, this);
+        }
     }
     
     public void abort(){
@@ -43,7 +73,7 @@ public class Simulation {
     }
 
     public String getStatus(){
-        return currentIteration.get() / iterations * 1.0 + "%";
+        return currentIteration.get() / iterations.get() * 1.0 + "%";
     }
 
     public void incrementIteration(){
@@ -78,12 +108,12 @@ public class Simulation {
         this.threads = threads;
     }
 
-    public int getIterations() {
-        return iterations;
+    public long getIterations() {
+        return iterations.get();
     }
 
-    public void setIterations(int iterations) {
-        this.iterations = iterations;
+    public void setIterations(long iterations) {
+        this.iterations.set(iterations);
     }
     
     public boolean isRunning(){
