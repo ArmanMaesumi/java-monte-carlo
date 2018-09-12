@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Worker extends Thread {
+public class Worker implements Runnable {
 
     private boolean working;
 
@@ -8,24 +8,28 @@ public class Worker extends Thread {
     private int threadId;
 
     private Simulation sim;
+    private long start;
+    private long end;
 
-    public Worker(int id, Simulation sim) {
+    public Worker(int id, long start, long end, Simulation sim) {
         this.threadId = id;
         this.sim = sim;
-
+        this.start = start;
+        this.end = end;
         this.working = false;
         this.completedIterations = new AtomicLong(0);
     }
 
     public void run() {
         working = true;
-        while (sim.getIterations() > sim.getIteration()) {
-            sim.getRun().run();
+        System.out.println("Thread("+threadId+"): Start="+start+", End="+end);
+        for (long i = start; i < end; i++) {
+            sim.getEnvironment().run(i);
             sim.incrementIteration();
             incrementCompletedIterations();
         }
         working = false;
-        System.out.println("Thread: " + threadId + ", " + completedIterations.get());
+        System.out.println("Thread("+threadId+") Complete: " + completedIterations.get());
     }
 
     private void incrementCompletedIterations() {

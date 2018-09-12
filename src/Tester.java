@@ -5,27 +5,29 @@ public class Tester implements MonteCarlo{
     public AtomicInteger x = new AtomicInteger(0);
 
     @Override
-    public void run() {
-        //System.out.println(sim.getIteration());
-        if (isPrime((int)sim.getIteration()))
+    public void run(long i) {
+        if (isPrime(i))
             x.incrementAndGet();
     }
 
     @Override
     public void initialize(Object o) {
         long start = System.currentTimeMillis();
-        sim.setIterations(1000000);
+        sim.setEnvironment(this);
+        sim.setIterations(20000000);
         sim.setThreads(10);
-        sim.start(this::run);
-        System.out.println(System.currentTimeMillis() - start);
+        sim.start();
+        System.out.println("Elapsed: " + (System.currentTimeMillis() - start)/1000.0);
         System.out.println(x.get());
     }
 
-    private synchronized static boolean isPrime(int num) {
+    private boolean isPrime(long num) {
+        if (num < 2) return false;
+        if (num == 2) return true;
         if (num % 2 == 0) return false;
-        for (int i = 3; i * i < num; i += 2)
+        for (int i = 3; i * i <= num; i += 2)
             if (num % i == 0) return false;
-        System.out.println(num);
+        //System.out.println(num);
         return true;
     }
 
