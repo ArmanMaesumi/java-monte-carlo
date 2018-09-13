@@ -4,39 +4,82 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Simulation {
-    
+
     private int id;
     private int threads;
-    private AtomicLong iterations;
-
-    private AtomicLong currentIteration;
+    private int mode;
 
     private boolean isRunning;
 
-    private Worker[] workers;
+    private AtomicLong iterations;
+    private AtomicLong currentIteration;
 
+    private Worker[] workers;
+    private Class[] workerTypes = {DomainWorker.class};
     private ExecutorService threadPool;
 
     private MonteCarlo environment;
 
-    public Simulation(int id, int threads, int iterations){
+    public Simulation() {
+        this.id = 0;
+        this.threads = 1;
+        this.mode = MonteCarlo.SIMULATION_MODE_DEFAULT;
+        this.iterations = new AtomicLong(1);
+        this.currentIteration = new AtomicLong(0);
+        this.threadPool = Executors.newFixedThreadPool(threads);
+        this.workers = new Worker[threads];
+    }
+
+    public Simulation(int id, int threads, int iterations, int mode) {
         this.id = id;
         this.threads = threads;
+        this.mode = mode;
         this.iterations = new AtomicLong(iterations);
         this.currentIteration = new AtomicLong(0);
         this.threadPool = Executors.newFixedThreadPool(threads);
-        workers = new Worker[threads];
+        this.workers = new Worker[threads];
     }
 
-    public void start(){
-        isRunning = true;
+    public void start() {
         workers = new Worker[threads];
         initializeWorkers();
+        isRunning = true;
         startWorkers();
         isRunning = false;
     }
 
-    private void startWorkers(){
+    private void initializeWorkers(){
+        long jobSize = iterations.get() / threads;
+        long remainder = iterations.get() % threads;
+        System.out.println("---");
+        System.out.println(jobSize);
+        System.out.println(remainder);
+        System.out.println("Mode="+mode);
+        System.out.println("---");
+
+        // Default:
+        if (mode == 0) {
+            for (int i = 0; i < workers.length; i++) {
+                if (i == workers.length - 1 && remainder > 0) {
+                    workers[i] = new Worker(i, this, jobSize + remainder);
+                } else {
+                    workers[i] = new Worker(i, this, jobSize);
+                }
+            }
+        }
+        // Domain:
+        else if (mode == 1) {
+            for (int i = 0; i < workers.length; i++) {
+                if (i == workers.length - 1 && remainder > 0) {
+                    workers[i] = new DomainWorker(i, i * (jobSize), ((i + 1) * jobSize) + remainder, this);
+                } else {
+                    workers[i] = new DomainWorker(i, i * (jobSize), (i + 1) * (jobSize), this);
+                }
+            }
+        }
+    }
+
+    private void startWorkers() {
         for (int i = 0; i < workers.length; i++) {
             threadPool.execute(workers[i]);
         }
@@ -46,54 +89,52 @@ public class Simulation {
         } catch (InterruptedException e) {
             System.out.println("Thread pool termination error : " + e.toString());
         }
+        isRunning = false;
     }
 
-    private void initializeWorkers(){
-        long jobSize = iterations.get() / threads;
-        long remainder = iterations.get() % threads;
-        for (int i = 0; i < workers.length; i++) {
-            if (i == workers.length - 1 && remainder > 0){
-                workers[i] = new Worker(i, i * (jobSize), remainder, this);
-            }else{
-                workers[i] = new Worker(i, i * (jobSize), (i + 1) * (jobSize), this);
-            }
-            //workers[i] = new Worker(i, this);
-        }
-    }
-    
-    public void abort(){
-        
-    }
-    
-    public void pause(){
-        
+    public void abort() {
+
     }
 
-    public void setEnvironment(MonteCarlo mc){
+    public void pause() {
+
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public int getMode() {
+        return this.mode;
+    }
+
+    public void setEnvironment(MonteCarlo mc) {
         this.environment = mc;
     }
 
-    public MonteCarlo getEnvironment(){
+    public MonteCarlo getEnvironment() {
         return this.environment;
     }
 
-    public String getStatus(){
-        return currentIteration.get() / iterations.get() * 1.0 + "%";
+    public String getStatus() {
+        if (currentIteration.get() <= 0)
+            return "0.0%";
+        return ((1.0 * currentIteration.get()) / iterations.get()) * 100 + "%";
     }
 
-    public void incrementIteration(){
+    public void incrementIteration() {
         this.currentIteration.incrementAndGet();
     }
 
-    public void decrementIteration(){
+    public void decrementIteration() {
         this.currentIteration.decrementAndGet();
     }
 
-    public void setIteration(long n){
+    public void setIteration(long n) {
         this.currentIteration.addAndGet(n);
     }
 
-    public long getIteration(){
+    public long getCurrentIteration() {
         return this.currentIteration.get();
     }
 
@@ -110,8 +151,10 @@ public class Simulation {
     }
 
     public void setThreads(int threads) {
-        this.threads = threads;
-        this.threadPool = Executors.newFixedThreadPool(threads);
+        if (!isRunning) {
+            this.threads = threads;
+            this.threadPool = Executors.newFixedThreadPool(threads);
+        }
     }
 
     public long getIterations() {
@@ -121,8 +164,8 @@ public class Simulation {
     public void setIterations(long iterations) {
         this.iterations.set(iterations);
     }
-    
-    public boolean isRunning(){
+
+    public boolean isRunning() {
         return isRunning;
     }
 }

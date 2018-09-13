@@ -1,23 +1,30 @@
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class Tester implements MonteCarlo{
+public class Tester implements MonteCarlo {
 
     public AtomicInteger x = new AtomicInteger(0);
 
     @Override
-    public void run(long i) {
+    public void defaultSimulation() {
+        x.incrementAndGet();
+    }
+
+    @Override
+    public void domainSimulation(long i) {
         if (isPrime(i))
             x.incrementAndGet();
     }
 
     @Override
-    public void initialize(Object o) {
+    public void initialize() {
         long start = System.currentTimeMillis();
         sim.setEnvironment(this);
-        sim.setIterations(20000000);
+        sim.setIterations(10000000);
         sim.setThreads(10);
+        sim.setMode(SIMULATION_MODE_DOMAIN);
         sim.start();
-        System.out.println("Elapsed: " + (System.currentTimeMillis() - start)/1000.0);
+        System.out.println("Elapsed: " + (System.currentTimeMillis() - start) / 1000.0);
         System.out.println(x.get());
     }
 

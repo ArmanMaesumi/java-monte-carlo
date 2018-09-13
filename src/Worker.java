@@ -2,37 +2,42 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Worker implements Runnable {
 
-    private boolean working;
+    protected boolean working;
 
-    private AtomicLong completedIterations;
-    private int threadId;
+    private long iterations;
+    protected AtomicLong completedIterations;
+    protected Simulation sim;
 
-    private Simulation sim;
-    private long start;
-    private long end;
+    protected int threadId;
 
-    public Worker(int id, long start, long end, Simulation sim) {
+    public Worker(int id, Simulation sim) {
         this.threadId = id;
-        this.sim = sim;
-        this.start = start;
-        this.end = end;
         this.working = false;
+        this.sim = sim;
+        this.completedIterations = new AtomicLong(0);
+    }
+
+    public Worker(int id, Simulation sim, long iterations){
+        this.threadId = id;
+        this.iterations = iterations;
+        this.working = false;
+        this.sim = sim;
         this.completedIterations = new AtomicLong(0);
     }
 
     public void run() {
         working = true;
-        System.out.println("Thread("+threadId+"): Start="+start+", End="+end);
-        for (long i = start; i < end; i++) {
-            sim.getEnvironment().run(i);
+        System.out.println("Thread(" + threadId + "): Iterations=" + iterations);
+        for (long i = 0; i < iterations; i++) {
+            sim.getEnvironment().defaultSimulation();
             sim.incrementIteration();
             incrementCompletedIterations();
         }
         working = false;
-        System.out.println("Thread("+threadId+") Complete: " + completedIterations.get());
+        System.out.println("Thread(" + threadId + ") Complete: " + completedIterations.get());
     }
 
-    private void incrementCompletedIterations() {
+    public void incrementCompletedIterations() {
         this.completedIterations.incrementAndGet();
     }
 
