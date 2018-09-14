@@ -9,8 +9,8 @@ See Tester.java for sample code
 // Implement MonteCarlo interface:
 public class Tester implements MonteCarlo {
 
-		// Code for example in defaultSimulation():
-		public AtomicInteger sum = new AtomicInteger(0);
+	// Code for example in defaultSimulation():
+	public AtomicInteger sum = new AtomicInteger(0);
     
     	// MonteCarlo interface method:
     	// SIMULATION_MODE_DEFAULT:
@@ -34,7 +34,7 @@ public class Tester implements MonteCarlo {
     	}
     
     	// MonteCarlo interface method:
- 		// SIMULATION_MODE_DOMAIN:
+ 	// SIMULATION_MODE_DOMAIN:
     	public void domainSimulation(long i) {
     		// This method acts similarly to defaultSimulation(), the primary difference is that
 		// domain simulations are provided the current iteration that is being processed.
