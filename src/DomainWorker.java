@@ -12,13 +12,23 @@ public class DomainWorker extends Worker {
     @Override
     public void run() {
         working = true;
+        abort = false;
+        pause = false;
         System.out.println("Thread(" + threadId + "): Start=" + start + ", End=" + end);
-        for (long i = start; i < end; i++) {
-            sim.getEnvironment().domainSimulation(i);
-            sim.incrementIteration();
-            incrementCompletedIterations();
+        for (long i = start; i < end;) {
+            if (abort)
+                break;
+
+            if (!pause) {
+                sim.getEnvironment().domainSimulation(i);
+                sim.incrementIteration();
+                incrementCompletedIterations();
+                i++;
+            }
         }
         working = false;
+        abort = false;
+        pause = false;
         System.out.println("Thread(" + threadId + ") Complete: " + completedIterations.get());
     }
 }

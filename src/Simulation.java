@@ -43,9 +43,7 @@ public class Simulation {
     public void start() {
         workers = new Worker[threads];
         initializeWorkers();
-        isRunning = true;
         startWorkers();
-        isRunning = false;
     }
 
     private void initializeWorkers(){
@@ -80,24 +78,42 @@ public class Simulation {
     }
 
     private void startWorkers() {
+        isRunning = true;
         for (int i = 0; i < workers.length; i++) {
             threadPool.execute(workers[i]);
         }
+        shutdown();
+        isRunning = false;
+    }
+
+    private void shutdown(){
         threadPool.shutdown();
         try {
             threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             System.out.println("Thread pool termination error : " + e.toString());
         }
-        isRunning = false;
     }
 
     public void abort() {
-
+        for (int i = 0; i < workers.length; i++) {
+            if(workers[i].isWorking())
+                workers[i].abort();
+        }
     }
 
     public void pause() {
+        for (int i = 0; i < workers.length; i++) {
+            if(workers[i].isWorking())
+                workers[i].pause();
+        }
+    }
 
+    public void unpause(){
+        for (int i = 0; i < workers.length; i++) {
+            if(!workers[i].isWorking())
+                workers[i].unpause();
+        }
     }
 
     public void setMode(int mode) {
