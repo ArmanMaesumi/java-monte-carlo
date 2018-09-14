@@ -15,7 +15,7 @@ public class Tester implements MonteCarlo {
     	// MonteCarlo interface method:
     	// SIMULATION_MODE_DEFAULT:
     	public void defaultSimulation() {
-	// This method will preform n number of iterations of this method on set number of threads.
+		// This method will preform n number of iterations of this method on set number of threads.
 			// In this simulation mode, the method does not have access to the current
 			// iteration of the simulation. You should use the default simulation mode
 			// when you are doing n number of INDEPENDANT simulations, meaning the current
