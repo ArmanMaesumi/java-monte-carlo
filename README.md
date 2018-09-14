@@ -24,29 +24,29 @@ public class Tester implements MonteCarlo {
         // Example 1:
         // Concurrently calculate the average value of random(0, 10) * random (0, 10):
         
-				// Use AtomicInteger, and ThreadLocalRandom classes for safe concurrent use:
-				int a = ThreadLocalRandom.current().nextInt(1, 10);
-				int b = ThreadLocalRandom.current().nextInt(1, 10);
+		// Use AtomicInteger, and ThreadLocalRandom classes for safe concurrent use:
+		int a = ThreadLocalRandom.current().nextInt(1, 10);
+		int b = ThreadLocalRandom.current().nextInt(1, 10);
 				
-				// Accumulate a*b in AtomicInteger:
-				// AtomicLong may be more suited depending on your number of iterations.
+		// Accumulate a*b in AtomicInteger:
+		// AtomicLong may be more suited depending on your number of iterations.
         sum.addAndGet(a * b);
-				// See Example 1 code in initialize()
+		// See Example 1 code in initialize()
     }
     
     // MonteCarlo interface method:
-		// SIMULATION_MODE_DOMAIN:
+	// SIMULATION_MODE_DOMAIN:
     public void domainSimulation(long i) {
-				// This method acts similarly to defaultSimulation(), the primary difference is that
-				// domain simulations are provided the current iteration that is being processed.
-				// This means that the value "long i" will attain every value from 0 to n, where
-				// n is the total number of iterations.
+		// This method acts similarly to defaultSimulation(), the primary difference is that
+		// domain simulations are provided the current iteration that is being processed.
+		// This means that the value "long i" will attain every value from 0 to n, where
+		// n is the total number of iterations.
 				
-				// Example 2:
-				// Concurrently print all primes from 0 to n.
+		// Example 2:
+		// Concurrently print all primes from 0 to n.
 				
-				if (isPrime(i))
-						System.out.println(i + " is a prime.");
+		if (isPrime(i))
+			System.out.println(i + " is a prime.");
     }
     
     // MonteCarlo interface method:
@@ -62,16 +62,16 @@ public class Tester implements MonteCarlo {
         
         // Set the simulation mode:
         sim.setMode(SIMULATION_MODE_DEFAULT);
-				// or
-				// sim.setMode(SIMULATION_MODE_DOMAIN);
+		// or
+		// sim.setMode(SIMULATION_MODE_DOMAIN);
         
         // Run simulation:
         sim.start();
 				
-				// Example 1 code:
-				// Print ratio of total value of a*b to the total number of iterations.
-				// Force double precision result with *1.0:
-				System.out.println("Average value of a*b = " + sum.get / (sim.getIterations() * 1.0));
+		// Example 1 code:
+		// Print ratio of total value of a*b to the total number of iterations.
+		// Force double precision result with *1.0:
+		System.out.println("Average value of a*b = " + sum.get / (sim.getIterations() * 1.0));
     }
 }
 ```
