@@ -1,3 +1,5 @@
+package arman.edu.utexas.cs;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -11,11 +13,13 @@ public class Simulation {
 
     private boolean isRunning;
 
+    // Total iterations to simulate
     private AtomicLong iterations;
+
+    // The number of iterations completed
     private AtomicLong currentIteration;
 
     private Worker[] workers;
-    private Class[] workerTypes = {DomainWorker.class};
     private ExecutorService threadPool;
 
     private MonteCarlo environment;
@@ -55,9 +59,10 @@ public class Simulation {
         System.out.println("Mode="+mode);
         System.out.println("---");
 
-        // Default:
+        // Default simulation:
         if (mode == 0) {
             for (int i = 0; i < workers.length; i++) {
+                // If there is a remainder, assign the remainder to the last thread:
                 if (i == workers.length - 1 && remainder > 0) {
                     workers[i] = new Worker(i, this, jobSize + remainder);
                 } else {
@@ -65,7 +70,7 @@ public class Simulation {
                 }
             }
         }
-        // Domain:
+        // Domain simulation:
         else if (mode == 1) {
             for (int i = 0; i < workers.length; i++) {
                 if (i == workers.length - 1 && remainder > 0) {
@@ -79,9 +84,11 @@ public class Simulation {
 
     private void startWorkers() {
         isRunning = true;
+        // Start ExecutorService
         for (int i = 0; i < workers.length; i++) {
             threadPool.execute(workers[i]);
         }
+        // Shutdown when all threads are complete
         shutdown();
         isRunning = false;
     }
@@ -95,6 +102,7 @@ public class Simulation {
         }
     }
 
+    // Aborts simulation
     public void abort() {
         for (int i = 0; i < workers.length; i++) {
             if(workers[i].isWorking())
@@ -102,6 +110,7 @@ public class Simulation {
         }
     }
 
+    // Pauses simulation
     public void pause() {
         for (int i = 0; i < workers.length; i++) {
             if(workers[i].isWorking())
@@ -109,6 +118,7 @@ public class Simulation {
         }
     }
 
+    // Unpauses arman.edu.utexas.cs.Simulation
     public void unpause(){
         for (int i = 0; i < workers.length; i++) {
             if(!workers[i].isWorking())

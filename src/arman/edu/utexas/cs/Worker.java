@@ -1,6 +1,8 @@
+package arman.edu.utexas.cs;
+
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Worker implements Runnable {
+class Worker implements Runnable {
 
     protected boolean working;
     protected boolean abort;

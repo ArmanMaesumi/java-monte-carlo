@@ -1,4 +1,6 @@
-public class DomainWorker extends Worker {
+package arman.edu.utexas.cs;
+
+class DomainWorker extends Worker {
 
     private long start;
     private long end;
