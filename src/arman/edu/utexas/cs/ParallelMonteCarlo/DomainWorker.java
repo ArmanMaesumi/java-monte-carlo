@@ -1,4 +1,4 @@
-package arman.edu.utexas.cs;
+package arman.edu.utexas.cs.ParallelMonteCarlo;
 
 class DomainWorker extends Worker {
 

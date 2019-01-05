@@ -1,8 +1,8 @@
-package arman.edu.utexas.cs;
+package arman.edu.utexas.cs.ParallelMonteCarlo;
 
 public interface MonteCarlo {
 
-    // arman.edu.utexas.cs.Simulation object used to control simulation properties
+    // arman.edu.utexas.cs.ParallelMonteCarlo.Simulation object used to control simulation properties
     Simulation sim = new Simulation(0, 1, 1, 0);
 
     // Constants that determine simulation mode

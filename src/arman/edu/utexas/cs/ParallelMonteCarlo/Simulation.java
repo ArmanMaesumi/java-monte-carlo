@@ -1,4 +1,4 @@
-package arman.edu.utexas.cs;
+package arman.edu.utexas.cs.ParallelMonteCarlo;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -118,7 +118,7 @@ public class Simulation {
         }
     }
 
-    // Unpauses arman.edu.utexas.cs.Simulation
+    // Unpauses arman.edu.utexas.cs.ParallelMonteCarlo.Simulation
     public void unpause(){
         for (int i = 0; i < workers.length; i++) {
             if(!workers[i].isWorking())

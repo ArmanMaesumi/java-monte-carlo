@@ -1,4 +1,4 @@
-package arman.edu.utexas.cs;
+package arman.edu.utexas.cs.ParallelMonteCarlo;
 
 import java.util.concurrent.atomic.AtomicLong;
 
