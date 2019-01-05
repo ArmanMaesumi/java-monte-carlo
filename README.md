@@ -8,7 +8,7 @@ See Tester.java for sample code
 
 ```
 // Import Parallel Monte Carlo library
-import arman.edu.utexas.cs.ParallelMonteCarlo.MonteCarlo;
+import arman.edu.utexas.cs.ParallelMonteCarlo;
 // Implement MonteCarlo interface:
 public class Tester implements MonteCarlo {
 
