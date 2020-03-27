@@ -73,7 +73,7 @@ public class Tester implements MonteCarlo {
 		// Example 1 code:
 		// Print ratio of total value of a*b to the total number of iterations.
 		// Force double precision result with *1.0:
-		System.out.println("Average value of a*b = " + sum.get / (sim.getIterations() * 1.0));
+		System.out.println("Average value of a*b = " + sum.get() / (sim.getIterations() * 1.0));
     	}
 }
 ```
